@@ -2,13 +2,11 @@ import {createTaskTemplate} from "./task";
 import {createTaskEditTemplate} from "./task-edit";
 import {createButtonLoadMoreTemplate} from "./button-load-more";
 
-const TASK_COUNT = 4;
-
-const appendTasks = () => {
-  return new Array(TASK_COUNT).join(createTaskTemplate());
+const renderTasks = (tasks, startTasks, tasksCount) => {
+  return tasks.slice(startTasks, tasksCount).map((task) => createTaskTemplate(task)).join(``);
 };
 
-export const createBoardTemplate = () => {
+const createBoardTemplate = (tasks, startTasks, tasksCount) => {
   return (
     `<section class="board container">
         <div class="board__filter-list">
@@ -18,10 +16,12 @@ export const createBoardTemplate = () => {
         </div>
 
         <div class="board__tasks">
-          ${createTaskEditTemplate()}
-          ${appendTasks()}
+          ${createTaskEditTemplate(tasks[0])}
+          ${renderTasks(tasks, startTasks, tasksCount)}
         </div>
         ${createButtonLoadMoreTemplate()}
       </section>`
   );
 };
+
+export {createBoardTemplate, renderTasks};
