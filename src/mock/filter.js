@@ -1,75 +1,36 @@
-const FilterNames = [
-  `all`,
-  `overdue`,
-  `today`,
-  `favorites`,
-  `repeating`,
-  `tags`,
-  `archive`
-];
-
-const FilterBy = {
-  'archive': (tasks) => {
-    return tasks.filter((task) => {
-      const {isArchive} = task;
-      return !!isArchive;
-    });
-  },
-  'favorites': (tasks) => {
-    return tasks.filter((task) => {
-      const {isFavorite} = task;
-      return !!isFavorite;
-    });
-  },
-  'overdue': (tasks) => {
-    return tasks.filter((task) => {
-      const {dueDate} = task;
-      return !!dueDate && (dueDate < Date.now());
-    });
-  },
-  'repeating': (tasks) => {
-    return tasks.filter((task) => {
-      const {repeatingDays} = task;
-      return Object.values(repeatingDays).some(Boolean);
-    });
-  },
-  'tags': (tasks) => {
-    return tasks.filter((task) => {
-      const {tags} = task;
-      return !!Array.from(tags).length;
-    });
-  },
-  'today': (tasks) => {
-    const date = new Date();
-
-    return tasks.filter((task) => {
-      const {dueDate} = task;
-      return !!dueDate && (dueDate.getDate() === date.getDate());
-    });
-  }
+const isTags = (tag) => {
+  return !!tag.size;
 };
 
-const getFilteredTasks = (tasks) => {
-  return Object.assign({}, {
-    'all': tasks,
-    'overdue': FilterBy.overdue(tasks),
-    'today': FilterBy.today(tasks),
-    'favorites': FilterBy.favorites(tasks),
-    'repeating': FilterBy.repeating(tasks),
-    'tags': FilterBy.tags(tasks),
-    'archive': FilterBy.archive(tasks)
-  });
+const isRepeatingDays = (days) => {
+  return Object.values(days).some(Boolean);
 };
 
-const generateFilters = (tasks) => {
-  const filteredTasks = getFilteredTasks(tasks);
+const isToday = (date, currentDate) => {
+  return !!date && date.getDate() === currentDate;
+};
 
-  return FilterNames.map((filter) => {
+const isOverdue = (date) => {
+  return !!date && date < Date.now();
+};
+
+const getAmountTasks = (tasks) => {
+  const date = new Date();
+
+  return tasks.reduce((accumulator, task) => {
+    const {dueDate, isFavorite, repeatingDays, tags, isArchive} = task;
+    const {all, overdue, today, favorites, repeating, archive} = accumulator;
+
     return {
-      title: filter,
-      count: filteredTasks[filter].length
+      all: all + Number(!isArchive),
+      overdue: overdue + Number(isOverdue(dueDate)),
+      today: today + Number(isToday(dueDate, date.getDate())),
+      favorites: favorites + Number(isFavorite),
+      repeating: repeating + Number(isRepeatingDays(repeatingDays)),
+      tags: accumulator.tags + Number(isTags(tags)),
+      archive: archive + Number(isArchive)
     };
-  });
+  }, {all: 0, overdue: 0, today: 0, favorites: 0, repeating: 0, tags: 0, archive: 0});
 };
 
-export {generateFilters};
+export {getAmountTasks};

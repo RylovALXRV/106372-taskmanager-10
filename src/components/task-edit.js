@@ -1,15 +1,15 @@
-import {Colors, MonthNames, Days} from "../const";
-import {formatTime} from "../utils";
+import {COLORS, MONTH_NAMES, DAYS} from "../const";
+import Util from "../utils";
 
 const createCardColorsMarkup = (currentColor) => {
-  return Colors.map((color) => {
+  return COLORS.map((color) => {
     return (
       `<input
        type="radio"
        id="color-${color}-4"
        class="card__color-input card__color-input--${color} visually-hidden"
        name="color"
-       value="black"
+       value="${color}"
        ${color === currentColor ? `checked` : ``}/>
      <label
        for="color-${color}-4"
@@ -19,7 +19,7 @@ const createCardColorsMarkup = (currentColor) => {
 };
 
 const createRepeatingDaysMarkup = (repeatingDays) => {
-  return Days.map((day) => {
+  return DAYS.map((day) => {
     return (
       `<input
         class="visually-hidden card__repeat-day-input"
@@ -40,10 +40,10 @@ const createHashtagsMarkup = (hashtags) => {
         <input
           type="hidden"
           name="hashtag"
-          value="repeat"
+          value="${hashtag}"
           class="card__hashtag-hidden-input"/>
         <p class="card__hashtag-name">
-          ${hashtag}
+          #${hashtag}
         </p>
         <button type="button" class="card__hashtag-delete">
           delete
@@ -81,10 +81,10 @@ const createTaskEditTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isRepeatingTask = Object.values(repeatingDays).some(Boolean);
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MonthNames[dueDate.getMonth()]}` : ``;
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const deadline = isExpired ? `card--deadline` : ``;
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;
-  const time = isDateShowing ? formatTime(dueDate) : ``;
+  const time = isDateShowing ? Util.formatTime(dueDate) : ``;
 
   return (
     `<article class="card card--edit card--${color} ${repeatClass} ${deadline}">
@@ -150,5 +150,27 @@ const createTaskEditTemplate = (task) => {
     </article>`
   );
 };
+
+export default class EditTask {
+  constructor(task) {
+    this._element = null;
+    this._task = task;
+  }
+
+  getTemplate() {
+    return createTaskEditTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = Util.createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 
 export {createTaskEditTemplate};

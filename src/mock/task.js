@@ -1,5 +1,15 @@
-import {Colors} from "../const";
-import {getRandomNumber, getRandomValue, isRandomBoolean} from "../utils";
+import {COLORS} from "../const";
+import Util from "../utils";
+
+const Day = {
+  FIRST: 0,
+  LAST: 7
+};
+
+const Tag = {
+  MIN: 0,
+  MAX: 3
+};
 
 const TaskFeature = {
   DEFAULT_REPEATING_DAYS: {
@@ -11,14 +21,14 @@ const TaskFeature = {
     'sa': false,
     'su': false
   },
-  DESCRIPTION: [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`],
+  DESCRIPTIONS: [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`],
   TAGS: [`homework`, `theory`, `practice`, `intensive`, `keks`]
 };
 
 const getRandomDate = () => {
   const targetDate = new Date();
-  const sing = isRandomBoolean() ? 1 : -1;
-  const diffValue = sing * getRandomNumber(0, 7);
+  const sing = Util.isRandomBoolean() ? 1 : -1;
+  const diffValue = sing * Util.getRandomInteger(Day.FIRST, Day.LAST);
 
   targetDate.setDate(targetDate.getDate() + diffValue);
 
@@ -26,31 +36,31 @@ const getRandomDate = () => {
 };
 
 const generateRepeatingDays = () => {
-  return Object.assign({}, TaskFeature.DEFAULT_REPEATING_DAYS, {
-    'mo': isRandomBoolean(),
-    'tu': isRandomBoolean(),
-    'we': isRandomBoolean(),
-    'th': isRandomBoolean(),
-    'fr': isRandomBoolean(),
-    'sa': isRandomBoolean(),
-    'su': isRandomBoolean()
-  });
+  return {
+    'mo': Util.isRandomBoolean(),
+    'tu': Util.isRandomBoolean(),
+    'we': Util.isRandomBoolean(),
+    'th': Util.isRandomBoolean(),
+    'fr': Util.isRandomBoolean(),
+    'sa': Util.isRandomBoolean(),
+    'su': Util.isRandomBoolean()
+  };
 };
 
 const generateTags = () => {
-  return TaskFeature.TAGS.filter(() => isRandomBoolean()).slice(0, 3);
+  return TaskFeature.TAGS.filter(() => Util.isRandomBoolean()).slice(Tag.MIN, Tag.MAX);
 };
 
 const generateTask = () => {
-  const dueDate = isRandomBoolean() ? null : getRandomDate();
+  const dueDate = Util.isRandomBoolean() ? null : getRandomDate();
 
   return {
-    color: getRandomValue(Colors),
-    description: getRandomValue(TaskFeature.DESCRIPTION),
+    color: Util.getRandomElement(COLORS),
+    description: Util.getRandomElement(TaskFeature.DESCRIPTIONS),
     dueDate,
-    isArchive: isRandomBoolean(),
-    isFavorite: isRandomBoolean(),
-    repeatingDays: dueDate ? TaskFeature.DEFAULT_REPEATING_DAYS : generateRepeatingDays(),
+    isArchive: Util.isRandomBoolean(),
+    isFavorite: Util.isRandomBoolean(),
+    repeatingDays: dueDate ? Object.assign({}, TaskFeature.DEFAULT_REPEATING_DAYS) : generateRepeatingDays(),
     tags: new Set(generateTags())
   };
 };

@@ -1,6 +1,8 @@
-import {generateFilters} from "../mock/filter";
+import {getAmountTasks} from "../mock/filter";
+import Util from "../utils";
+import {FILTER_NAMES} from "../const";
 
-const FILTER_CHECKED_COUNT = 0;
+const DEFAULT_FILTER_INDEX = 0;
 
 const removeFiltersTemplate = () => {
   const filterElement = document.querySelector(`.main__filter`);
@@ -10,20 +12,22 @@ const removeFiltersTemplate = () => {
 };
 
 const createFiltersMarkup = (tasks) => {
-  const filters = generateFilters(tasks);
+  const amountTasks = getAmountTasks(tasks);
 
-  return filters.map((filter, i) => {
-    const {title, count} = filter;
+  return FILTER_NAMES.map((filterName, i) => {
+    const isFilteredTasks = !!amountTasks[filterName];
+
     return (
       `<input
           type="radio"
-          id="filter__${title}"
+          id="filter__${filterName}"
           class="filter__input visually-hidden"
           name="filter"
-          ${i === FILTER_CHECKED_COUNT ? `checked` : ``}
+          ${i === DEFAULT_FILTER_INDEX ? `checked` : ``}
+          ${isFilteredTasks ? `` : `disabled`}
         />
-        <label for="filter__${title}" class="filter__label">
-          ${title} <span class="filter__${title}-count">${count}</span></label
+        <label for="filter__${filterName}" class="filter__label">
+          ${filterName} <span class="filter__${filterName}-count">${amountTasks[filterName]}</span></label
         >`
     );
   }).join(``);
@@ -38,5 +42,27 @@ const createFiltersTemplate = (tasks) => {
       </section>`
   );
 };
+
+export default class Filters {
+  constructor(tasks) {
+    this._element = null;
+    this._tasks = tasks;
+  }
+
+  getTemplate() {
+    return createFiltersTemplate(this._tasks);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = Util.createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 
 export {createFiltersTemplate};
