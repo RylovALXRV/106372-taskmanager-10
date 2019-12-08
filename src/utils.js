@@ -1,26 +1,61 @@
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`,
+  BEFOREEND: `beforeend`
+};
+
+const TaskNumber = {
+  COUNT: 22,
+  INDEX_START: 0,
+  SHOW: 8
+};
+
 const castTimeFormat = (value) => {
   return value < 10 ? `0${value}` : String(value);
 };
 
-const formatTime = (date) => {
-  const hours = castTimeFormat(date.getHours() % 12);
-  const minutes = castTimeFormat(date.getMinutes());
+export default class Util {
+  static render(container, template, position) {
+    switch (position) {
+      case RenderPosition.BEFOREEND:
+        container.append(template);
+        return;
+      case RenderPosition.AFTERBEGIN:
+        container.prepend(template);
+        return;
+      case RenderPosition.AFTEREND:
+        container.after(template);
+        return;
+    }
+  }
 
-  const interval = date.getHours() > 11 ? `pm` : `am`;
+  static createElement(template) {
+    const divElement = document.createElement(`div`);
+    divElement.innerHTML = template;
 
-  return `${hours}:${minutes} ${interval}`;
-};
+    return divElement.firstChild;
+  }
 
-const getRandomValue = (arr) => {
-  return arr[Math.floor(Math.random() * arr.length)];
-};
+  static formatTime(date) {
+    const hours = castTimeFormat(date.getHours() % 12);
+    const minutes = castTimeFormat(date.getMinutes());
 
-const getRandomNumber = (min, max) => {
-  return Math.round(Math.random() * (max - min) + min);
-};
+    const interval = date.getHours() > 11 ? `pm` : `am`;
 
-const isRandomBoolean = () => {
-  return Math.random() > 0.5;
-};
+    return `${hours}:${minutes} ${interval}`;
+  }
 
-export {formatTime, getRandomNumber, getRandomValue, isRandomBoolean};
+  static getRandomElement(elements) {
+    return elements[Math.floor(Math.random() * elements.length)];
+  }
+
+  static getRandomInteger(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+
+  static isRandomBoolean() {
+    return Math.random() > 0.5;
+  }
+}
+
+export {RenderPosition, TaskNumber};

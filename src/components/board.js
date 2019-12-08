@@ -1,12 +1,6 @@
-import {createTaskTemplate} from "./task";
-import {createTaskEditTemplate} from "./task-edit";
-import {createButtonLoadMoreTemplate} from "./button-load-more";
+import Util from "../utils";
 
-const renderTasks = (tasks, startTasks, tasksCount) => {
-  return tasks.slice(startTasks, tasksCount).map((task) => createTaskTemplate(task)).join(``);
-};
-
-const createBoardTemplate = (tasks, startTasks, tasksCount) => {
+const createBoardTemplate = () => {
   return (
     `<section class="board container">
         <div class="board__filter-list">
@@ -15,13 +9,28 @@ const createBoardTemplate = (tasks, startTasks, tasksCount) => {
           <a href="#" class="board__filter">SORT BY DATE down</a>
         </div>
 
-        <div class="board__tasks">
-          ${createTaskEditTemplate(tasks[0])}
-          ${renderTasks(tasks, startTasks, tasksCount)}
-        </div>
-        ${createButtonLoadMoreTemplate()}
+        <div class="board__tasks"></div>
       </section>`
   );
 };
 
-export {createBoardTemplate, renderTasks};
+export default class Board {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createBoardTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = Util.createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
