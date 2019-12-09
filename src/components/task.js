@@ -115,24 +115,44 @@ export default class Task {
     return this._element;
   }
 
+  getEditButtonElement() {
+    return this.getElement().querySelector(`.card__btn--edit`);
+  }
+
   removeElement() {
     this._element = null;
   }
 }
 
 export const renderTask = (task, parentElement) => {
-  const taskComponent = new Task(task);
   const taskEditComponent = new EditTask(task);
+  const taskComponent = new Task(task);
 
-  const editButtonElement = taskComponent.getElement().querySelector(`.card__btn--edit`);
-  editButtonElement.addEventListener(`click`, () => {
-    parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
-  });
+  const onEscKeyDown = (evt) => {
+    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
-  const editFormElement = taskEditComponent.getElement().querySelector(`form`);
-  editFormElement.addEventListener(`submit`, () => {
+    if (isEscKey) {
+      parentElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const replaceEditToTask = () => {
     parentElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  };
+
+  const replaceTaskToEdit = () => {
+    parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+  };
+
+  const editButtonElement = taskComponent.getEditButtonElement();
+  editButtonElement.addEventListener(`click`, () => {
+    replaceTaskToEdit();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
+
+  const editFormElement = taskEditComponent.getEditFormElement();
+  editFormElement.addEventListener(`submit`, replaceEditToTask);
 
   Util.render(parentElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
 };

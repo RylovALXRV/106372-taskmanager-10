@@ -19,13 +19,13 @@ export default class Util {
     switch (position) {
       case RenderPosition.BEFOREEND:
         container.append(template);
-        return;
+        break;
       case RenderPosition.AFTERBEGIN:
         container.prepend(template);
-        return;
+        break;
       case RenderPosition.AFTEREND:
         container.after(template);
-        return;
+        break;
     }
   }
 
@@ -33,7 +33,7 @@ export default class Util {
     const divElement = document.createElement(`div`);
     divElement.innerHTML = template;
 
-    return divElement.firstChild;
+    return divElement.firstElementChild;
   }
 
   static formatTime(date) {
