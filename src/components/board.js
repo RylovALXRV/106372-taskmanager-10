@@ -1,18 +1,22 @@
 import Util from "../utils";
 
+// может так сделать сообщением, чтобы оно изначально было, а потом удалять содержимое контайнера
 const createBoardTemplate = () => {
   return (
-    `<section class="board container"></section>`
+    `<section class="board container">
+      <p class="board__no-tasks">Click «ADD NEW TASK» in menu to create your first task</p>
+    </section>`
   );
 };
 
 export default class Board {
-  constructor() {
+  constructor(tasks) {
     this._element = null;
+    this._tasks = tasks;
   }
 
   getTemplate() {
-    return createBoardTemplate();
+    return createBoardTemplate(this._tasks);
   }
 
   getElement() {

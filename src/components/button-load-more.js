@@ -6,12 +6,10 @@ const createButtonLoadMoreTemplate = () => {
   );
 };
 
-const removeButtonLoadMore = (currentTasksCount, tasks) => {
-  const loadMoreElement = document.querySelector(`.load-more`);
-
-  if (loadMoreElement && currentTasksCount >= tasks) {
-    loadMoreElement.remove();
-    new ButtonLoadMore().removeElement();
+const removeButtonLoadMore = (button, currentTasksCount, tasks) => {
+  if (currentTasksCount >= tasks) {
+    button.getElement().remove();
+    button.removeElement();
   }
 };
 

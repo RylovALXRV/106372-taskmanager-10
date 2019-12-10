@@ -130,7 +130,8 @@ export const renderTask = (task, parentElement) => {
 
   const closeEditTask = () => {
     replaceEditToTask();
-    document.removeEventListener(`keydown`, onEscKeyDown);
+    currentTask = null;
+    currentEditTask = null;
   };
 
   const onEscKeyDown = (evt) => {
@@ -143,31 +144,37 @@ export const renderTask = (task, parentElement) => {
 
   const replaceEditToTask = () => {
     parentElement.replaceChild(currentTask, currentEditTask);
-    currentTask = null;
-    currentEditTask = null;
+    document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
   const replaceTaskToEdit = () => {
-    parentElement.replaceChild(currentEditTask, currentTask);
+    parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+    document.addEventListener(`keydown`, onEscKeyDown);
   };
 
   const editButtonElement = taskComponent.getEditButtonElement();
   editButtonElement.addEventListener(`click`, () => {
 
-    if (currentTask && currentTask !== taskComponent.getElement()) {
+    if (currentTask !== taskComponent.getElement()) {
+      replaceTaskToEdit();
+    }
+
+    if (currentTask) {
       closeEditTask();
-    } else {
-      document.addEventListener(`keydown`, onEscKeyDown);
     }
 
     currentTask = taskComponent.getElement();
     currentEditTask = taskEditComponent.getElement();
-    replaceTaskToEdit();
   });
 
   const editFormElement = taskEditComponent.getEditFormElement();
-  editFormElement.addEventListener(`submit`, () => {
-    // здесь не получается удалить обработчик события при переключении с одной задачи на другую
+  editFormElement.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    // все равно не получается закрыть обработчик на keydown - не пойму, где ошибка и как исправить
+    // т.е. он закрывается, если открыть одну задачу для редактирования, нажать на save -> все закрывается и меняется,
+    // но если нажать сначала на одну, затем на другую, нажимаю на save -> задача меняется, нажимаю на Esc -> в консоле
+    // ошибка
+
     closeEditTask();
   });
 

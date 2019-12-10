@@ -5,7 +5,6 @@ import Sort from "./components/sort";
 import Tasks from "./components/tasks";
 import Filters from "./components/filters";
 import ButtonLoadMore, {removeButtonLoadMore} from "./components/button-load-more";
-import NoTasks from "./components/no-tasks";
 import {renderTask} from "./components/task";
 import {generateTasks} from "./mock/task";
 import {getAmountTasks} from "./mock/filter";
@@ -15,8 +14,10 @@ const controlElement = mainElement.querySelector(`.main__control`);
 
 const tasks = generateTasks(TaskNumber.COUNT);
 
-const boardComponent = new Board();
+const boardComponent = new Board(tasks);
 const boardElement = boardComponent.getElement();
+const buttonLoadMoreComponent = new ButtonLoadMore();
+const buttonLoadMoreElement = buttonLoadMoreComponent.getElement();
 const sortComponent = new Sort();
 const tasksComponent = new Tasks();
 const tasksElement = tasksComponent.getElement();
@@ -28,35 +29,31 @@ const renderTasks = (tasksCard, startTask, endTask) => {
 };
 
 const renderButtonLoadMore = () => {
-  const buttonLoadMoreElement = new ButtonLoadMore().getElement();
-
   buttonLoadMoreElement.addEventListener(`click`, () => {
     const prevTasksCount = tasksCount;
     tasksCount += TaskNumber.SHOW;
 
     renderTasks(tasks, prevTasksCount, tasksCount);
-    removeButtonLoadMore(tasksCount, TaskNumber.COUNT);
+    removeButtonLoadMore(buttonLoadMoreComponent, tasksCount, TaskNumber.COUNT);
   });
 
   Util.render(boardElement, buttonLoadMoreElement, RenderPosition.BEFOREEND);
 };
 
-const renderBoardElement = (tasksCard) => {
+const renderBoardElement = () => {
   Util.render(mainElement, boardElement, RenderPosition.BEFOREEND);
 
-  if (getAmountTasks(tasks).archive === tasksCard.length) {
-    Util.render(boardElement, new NoTasks().getElement(), RenderPosition.BEFOREEND);
-    return;
+  if (getAmountTasks(tasks).archive !== tasks.length) {
+    boardElement.innerHTML = ``;
+    Util.render(boardElement, sortComponent.getElement(), RenderPosition.AFTERBEGIN);
+    Util.render(boardElement, tasksElement, RenderPosition.BEFOREEND);
+    renderTasks(tasks, TaskNumber.INDEX_START, TaskNumber.SHOW);
+    renderButtonLoadMore();
   }
-
-  Util.render(boardElement, sortComponent.getElement(), RenderPosition.AFTERBEGIN);
-  Util.render(boardElement, tasksElement, RenderPosition.BEFOREEND);
-  renderTasks(tasks, TaskNumber.INDEX_START, TaskNumber.SHOW);
-  renderButtonLoadMore();
 };
 
 const fillPageElements = () => {
-  renderBoardElement(tasks);
+  renderBoardElement();
   Util.render(controlElement, new SiteMenu().getElement(), RenderPosition.BEFOREEND);
   Util.render(controlElement, new Filters(tasks).getElement(), RenderPosition.AFTEREND);
 };
