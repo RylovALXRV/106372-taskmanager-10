@@ -128,31 +128,51 @@ export const renderTask = (task, parentElement) => {
   const taskEditComponent = new EditTask(task);
   const taskComponent = new Task(task);
 
+  const closeEditTask = () => {
+    replaceEditToTask();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  };
+
   const onEscKeyDown = (evt) => {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
-      parentElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      closeEditTask();
     }
   };
 
   const replaceEditToTask = () => {
-    parentElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+    parentElement.replaceChild(currentTask, currentEditTask);
+    currentTask = null;
+    currentEditTask = null;
   };
 
   const replaceTaskToEdit = () => {
-    parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+    parentElement.replaceChild(currentEditTask, currentTask);
   };
 
   const editButtonElement = taskComponent.getEditButtonElement();
   editButtonElement.addEventListener(`click`, () => {
+
+    if (currentTask && currentTask !== taskComponent.getElement()) {
+      closeEditTask();
+    } else {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    }
+
+    currentTask = taskComponent.getElement();
+    currentEditTask = taskEditComponent.getElement();
     replaceTaskToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   const editFormElement = taskEditComponent.getEditFormElement();
-  editFormElement.addEventListener(`submit`, replaceEditToTask);
+  editFormElement.addEventListener(`submit`, () => {
+    // здесь не получается удалить обработчик события при переключении с одной задачи на другую
+    closeEditTask();
+  });
 
   Util.render(parentElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
 };
+
+let currentTask = null;
+let currentEditTask = null;
