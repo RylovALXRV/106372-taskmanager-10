@@ -168,6 +168,10 @@ export default class EditTask {
     return this._element;
   }
 
+  getEditFormElement() {
+    return this.getElement().querySelector(`form`);
+  }
+
   removeElement() {
     this._element = null;
   }

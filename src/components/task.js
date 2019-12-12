@@ -115,24 +115,66 @@ export default class Task {
     return this._element;
   }
 
+  getEditButtonElement() {
+    return this.getElement().querySelector(`.card__btn--edit`);
+  }
+
   removeElement() {
     this._element = null;
   }
 }
 
-export const renderTask = (task, parentElement) => {
-  const taskComponent = new Task(task);
-  const taskEditComponent = new EditTask(task);
+const replaceEditToTask = () => {
+  document.querySelector(`.board__tasks`).replaceChild(currentTask, currentEditTask);
+  document.removeEventListener(`keydown`, onEscKeyDown);
+};
 
-  const editButtonElement = taskComponent.getElement().querySelector(`.card__btn--edit`);
-  editButtonElement.addEventListener(`click`, () => {
+const closeEditTask = () => {
+  replaceEditToTask();
+  currentTask = null;
+  currentEditTask = null;
+};
+
+const onEscKeyDown = (evt) => {
+  const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+  if (isEscKey) {
+    closeEditTask();
+  }
+};
+
+export const renderTask = (task, parentElement) => {
+  const taskEditComponent = new EditTask(task);
+  const taskComponent = new Task(task);
+
+  const replaceTaskToEdit = () => {
     parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+    document.addEventListener(`keydown`, onEscKeyDown);
+  };
+
+  const editButtonElement = taskComponent.getEditButtonElement();
+  editButtonElement.addEventListener(`click`, () => {
+
+    if (currentTask) {
+      closeEditTask();
+    }
+
+    if (currentTask !== taskComponent.getElement()) {
+      replaceTaskToEdit();
+    }
+
+    currentTask = taskComponent.getElement();
+    currentEditTask = taskEditComponent.getElement();
   });
 
-  const editFormElement = taskEditComponent.getElement().querySelector(`form`);
-  editFormElement.addEventListener(`submit`, () => {
-    parentElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  const editFormElement = taskEditComponent.getEditFormElement();
+  editFormElement.addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    closeEditTask();
   });
 
   Util.render(parentElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
 };
+
+let currentTask = null;
+let currentEditTask = null;

@@ -1,7 +1,4 @@
-import Util, {RenderPosition, TaskNumber} from "../utils";
-import {renderTasks} from "../main";
-
-let tasksCount = TaskNumber.SHOW;
+import Util from "../utils";
 
 const createButtonLoadMoreTemplate = () => {
   return (
@@ -9,15 +6,14 @@ const createButtonLoadMoreTemplate = () => {
   );
 };
 
-const removeButtonLoadMore = (currentTasksCount, tasks) => {
-  const loadMoreElement = document.querySelector(`.load-more`);
-
-  if (loadMoreElement && currentTasksCount >= tasks) {
-    loadMoreElement.remove();
+const removeButtonLoadMore = (button, currentTasksCount, tasks) => {
+  if (currentTasksCount >= tasks) {
+    button.getElement().remove();
+    button.removeElement();
   }
 };
 
-class ButtonLoadMore {
+export default class ButtonLoadMore {
   constructor() {
     this._element = null;
   }
@@ -38,19 +34,4 @@ class ButtonLoadMore {
   }
 }
 
-const renderButtonLoadMore = (tasks) => {
-  const boardElement = document.querySelector(`.board__tasks`);
-  const buttonLoadMoreElement = new ButtonLoadMore().getElement();
-
-  buttonLoadMoreElement.addEventListener(`click`, () => {
-    const prevTasksCount = tasksCount;
-    tasksCount += TaskNumber.SHOW;
-
-    renderTasks(tasks, prevTasksCount, tasksCount);
-    removeButtonLoadMore(tasksCount, TaskNumber.COUNT);
-  });
-
-  Util.render(boardElement, buttonLoadMoreElement, RenderPosition.AFTEREND);
-};
-
-export {renderButtonLoadMore};
+export {removeButtonLoadMore};

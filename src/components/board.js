@@ -1,26 +1,25 @@
 import Util from "../utils";
 
+export const createNoTasksMarkup = () => {
+  return (
+    `<p class="board__no-tasks">Click «ADD NEW TASK» in menu to create your first task</p>`
+  );
+};
+
 const createBoardTemplate = () => {
   return (
-    `<section class="board container">
-        <div class="board__filter-list">
-          <a href="#" class="board__filter">SORT BY DEFAULT</a>
-          <a href="#" class="board__filter">SORT BY DATE up</a>
-          <a href="#" class="board__filter">SORT BY DATE down</a>
-        </div>
-
-        <div class="board__tasks"></div>
-      </section>`
+    `<section class="board container"></section>`
   );
 };
 
 export default class Board {
-  constructor() {
+  constructor(tasks) {
     this._element = null;
+    this._tasks = tasks;
   }
 
   getTemplate() {
-    return createBoardTemplate();
+    return createBoardTemplate(this._tasks);
   }
 
   getElement() {
