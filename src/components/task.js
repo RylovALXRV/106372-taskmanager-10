@@ -124,28 +124,28 @@ export default class Task {
   }
 }
 
+const replaceEditToTask = () => {
+  document.querySelector(`.board__tasks`).replaceChild(currentTask, currentEditTask);
+  document.removeEventListener(`keydown`, onEscKeyDown);
+};
+
+const closeEditTask = () => {
+  replaceEditToTask();
+  currentTask = null;
+  currentEditTask = null;
+};
+
+const onEscKeyDown = (evt) => {
+  const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
+
+  if (isEscKey) {
+    closeEditTask();
+  }
+};
+
 export const renderTask = (task, parentElement) => {
   const taskEditComponent = new EditTask(task);
   const taskComponent = new Task(task);
-
-  const closeEditTask = () => {
-    replaceEditToTask();
-    currentTask = null;
-    currentEditTask = null;
-  };
-
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
-      closeEditTask();
-    }
-  };
-
-  const replaceEditToTask = () => {
-    parentElement.replaceChild(currentTask, currentEditTask);
-    document.removeEventListener(`keydown`, onEscKeyDown);
-  };
 
   const replaceTaskToEdit = () => {
     parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
@@ -155,12 +155,12 @@ export const renderTask = (task, parentElement) => {
   const editButtonElement = taskComponent.getEditButtonElement();
   editButtonElement.addEventListener(`click`, () => {
 
-    if (currentTask !== taskComponent.getElement()) {
-      replaceTaskToEdit();
-    }
-
     if (currentTask) {
       closeEditTask();
+    }
+
+    if (currentTask !== taskComponent.getElement()) {
+      replaceTaskToEdit();
     }
 
     currentTask = taskComponent.getElement();
@@ -170,11 +170,6 @@ export const renderTask = (task, parentElement) => {
   const editFormElement = taskEditComponent.getEditFormElement();
   editFormElement.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
-    // все равно не получается закрыть обработчик на keydown - не пойму, где ошибка и как исправить
-    // т.е. он закрывается, если открыть одну задачу для редактирования, нажать на save -> все закрывается и меняется,
-    // но если нажать сначала на одну, затем на другую, нажимаю на save -> задача меняется, нажимаю на Esc -> в консоле
-    // ошибка
-
     closeEditTask();
   });
 

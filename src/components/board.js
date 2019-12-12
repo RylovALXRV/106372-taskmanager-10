@@ -1,11 +1,14 @@
 import Util from "../utils";
 
-// может так сделать сообщением, чтобы оно изначально было, а потом удалять содержимое контайнера
+export const createNoTasksMarkup = () => {
+  return (
+    `<p class="board__no-tasks">Click «ADD NEW TASK» in menu to create your first task</p>`
+  );
+};
+
 const createBoardTemplate = () => {
   return (
-    `<section class="board container">
-      <p class="board__no-tasks">Click «ADD NEW TASK» in menu to create your first task</p>
-    </section>`
+    `<section class="board container"></section>`
   );
 };
 
