@@ -1,8 +1,6 @@
-import {MONTH_NAMES} from "../const";
-import Util, {RenderPosition} from "../utils";
-import EditTask from "./task-edit";
-
-const BUTTON_CONTROLS = [`edit`, `archive`, `favorites`];
+import {MONTH_NAMES, BUTTON_CONTROLS} from "../const";
+import Common from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const ButtonDefault = {
   edit: false,
@@ -37,7 +35,7 @@ const createDatesMarkup = (dueDate) => {
 
   if (isDateShowing) {
     const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
-    const time = isDateShowing ? Util.formatTime(dueDate) : ``;
+    const time = isDateShowing ? Common.formatTime(dueDate) : ``;
 
     return (
       `<div class="card__dates">
@@ -98,9 +96,10 @@ const createTaskTemplate = (task) => {
   );
 };
 
-export default class Task {
+export default class Task extends AbstractComponent {
   constructor(task) {
-    this._element = null;
+    super();
+
     this._task = task;
   }
 
@@ -108,73 +107,11 @@ export default class Task {
     return createTaskTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = Util.createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  getEditButtonElement() {
+  _getEditButtonElement() {
     return this.getElement().querySelector(`.card__btn--edit`);
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(handler) {
+    this._getEditButtonElement().addEventListener(`click`, handler);
   }
 }
-
-const replaceEditToTask = () => {
-  document.querySelector(`.board__tasks`).replaceChild(currentTask, currentEditTask);
-  document.removeEventListener(`keydown`, onEscKeyDown);
-};
-
-const closeEditTask = () => {
-  replaceEditToTask();
-  currentTask = null;
-  currentEditTask = null;
-};
-
-const onEscKeyDown = (evt) => {
-  const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-  if (isEscKey) {
-    closeEditTask();
-  }
-};
-
-export const renderTask = (task, parentElement) => {
-  const taskEditComponent = new EditTask(task);
-  const taskComponent = new Task(task);
-
-  const replaceTaskToEdit = () => {
-    parentElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
-    document.addEventListener(`keydown`, onEscKeyDown);
-  };
-
-  const editButtonElement = taskComponent.getEditButtonElement();
-  editButtonElement.addEventListener(`click`, () => {
-
-    if (currentTask) {
-      closeEditTask();
-    }
-
-    if (currentTask !== taskComponent.getElement()) {
-      replaceTaskToEdit();
-    }
-
-    currentTask = taskComponent.getElement();
-    currentEditTask = taskEditComponent.getElement();
-  });
-
-  const editFormElement = taskEditComponent.getEditFormElement();
-  editFormElement.addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
-    closeEditTask();
-  });
-
-  Util.render(parentElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
-};
-
-let currentTask = null;
-let currentEditTask = null;
