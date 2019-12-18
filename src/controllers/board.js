@@ -7,7 +7,8 @@ import Tasks from "../components/tasks";
 import ButtonLoadMore from "../components/button-load-more";
 import TaskController from "./task";
 
-let tasksCount = TaskNumber.SHOW;
+let currentTask = null;
+let currentEditTask = null;
 
 export default class BoardController {
   constructor(container) {
@@ -16,10 +17,12 @@ export default class BoardController {
     this._sortComponent = new Sort();
     this._tasksComponent = new Tasks();
     this._buttonLoadMoreComponent = new ButtonLoadMore();
+
+    this._tasksCount = TaskNumber.SHOW;
   }
 
   _renderTasks(tasks, startTask, endTask) {
-    tasks.slice(startTask, endTask).forEach((task) => new TaskController(this._tasksComponent).render(task));
+    tasks.slice(startTask, endTask).forEach((task) => new TaskController(this._tasksComponent, this.onOpen).render(task));
   }
 
   render(tasks) {
@@ -36,14 +39,22 @@ export default class BoardController {
     Render.render(container, this._buttonLoadMoreComponent.getElement(), RenderPosition.BEFOREEND);
 
     this._buttonLoadMoreComponent.setClickHandler(() => {
-      const prevTasksCount = tasksCount;
-      tasksCount += TaskNumber.SHOW;
+      const prevTasksCount = this._tasksCount;
+      this._tasksCount += TaskNumber.SHOW;
 
-      this._renderTasks(tasks, prevTasksCount, tasksCount);
+      this._renderTasks(tasks, prevTasksCount, this._tasksCount);
 
-      if (tasksCount >= tasks.length) {
+      if (this._tasksCount >= tasks.length) {
         Render.remove(this._buttonLoadMoreComponent);
       }
     });
+  }
+
+  onOpen(task, editTask, taskController) {
+    if (currentTask && currentTask !== task) {
+      taskController._replaceEditToTask(currentTask, currentEditTask);
+    }
+    currentTask = task;
+    currentEditTask = editTask;
   }
 }
