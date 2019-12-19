@@ -6,9 +6,7 @@ import Sort from "../components/sort";
 import Tasks from "../components/tasks";
 import ButtonLoadMore from "../components/button-load-more";
 import TaskController from "./task";
-
-let currentTask = null;
-let currentEditTask = null;
+import Common from "../utils/common";
 
 export default class BoardController {
   constructor(container) {
@@ -18,7 +16,13 @@ export default class BoardController {
     this._tasksComponent = new Tasks();
     this._buttonLoadMoreComponent = new ButtonLoadMore();
 
+    this.onOpen = this.onOpen.bind(this);
+    this.onEscKeyDown = this.onEscKeyDown.bind(this);
+
     this._tasksCount = TaskNumber.SHOW;
+    this._taskController = null;
+    this._currentTask = null;
+    this._currentEditTask = null;
   }
 
   _renderTasks(tasks, startTask, endTask) {
@@ -50,11 +54,31 @@ export default class BoardController {
     });
   }
 
-  onOpen(task, editTask, taskController) {
-    if (currentTask && currentTask !== task) {
-      taskController._replaceEditToTask(currentTask, currentEditTask);
+  onOpen(taskComponent, editTaskComponent, taskController) {
+    if (this._currentTask && this._currentTask !== taskComponent.getElement()) {
+      this.onClose();
     }
-    currentTask = task;
-    currentEditTask = editTask;
+
+    this._currentTask = taskComponent.getElement();
+    this._currentEditTask = editTaskComponent.getElement();
+    this._taskController = taskController;
+
+    editTaskComponent.setSubmitHandler((evt) => {
+      evt.preventDefault();
+      this.onClose();
+    });
+
+    document.addEventListener(`keydown`, this.onEscKeyDown);
+  }
+
+  onClose() {
+    this._taskController._replaceEditToTask(this._currentTask, this._currentEditTask);
+    document.removeEventListener(`keydown`, this.onEscKeyDown);
+  }
+
+  onEscKeyDown(evt) {
+    if (Common.isEscKey(evt)) {
+      this.onClose();
+    }
   }
 }
