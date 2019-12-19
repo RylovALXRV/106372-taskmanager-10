@@ -1,15 +1,8 @@
-import {getAmountTasks} from "../mock/filter";
-import Util from "../utils";
 import {FILTER_NAMES} from "../const";
+import {getAmountTasks} from "../mock/filter";
+import AbstractComponent from "./abstract-component";
 
 const DEFAULT_FILTER_INDEX = 0;
-
-const removeFiltersTemplate = () => {
-  const filterElement = document.querySelector(`.main__filter`);
-  if (filterElement) {
-    filterElement.remove();
-  }
-};
 
 const createFiltersMarkup = (tasks) => {
   const amountTasks = getAmountTasks(tasks);
@@ -34,8 +27,6 @@ const createFiltersMarkup = (tasks) => {
 };
 
 const createFiltersTemplate = (tasks) => {
-  removeFiltersTemplate();
-
   return (
     `<section class="main__filter filter container">
       ${createFiltersMarkup(tasks)}
@@ -43,25 +34,15 @@ const createFiltersTemplate = (tasks) => {
   );
 };
 
-export default class Filters {
+export default class Filters extends AbstractComponent {
   constructor(tasks) {
-    this._element = null;
+    super();
+
     this._tasks = tasks;
   }
 
   getTemplate() {
     return createFiltersTemplate(this._tasks);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = Util.createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

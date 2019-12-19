@@ -1,5 +1,6 @@
 import {COLORS, MONTH_NAMES, DAYS} from "../const";
-import Util from "../utils";
+import Common from "../utils/common";
+import AbstractComponent from "./abstract-component";
 
 const createCardColorsMarkup = (currentColor) => {
   return COLORS.map((color) => {
@@ -84,7 +85,7 @@ const createTaskEditTemplate = (task) => {
   const date = isDateShowing ? `${dueDate.getDate()} ${MONTH_NAMES[dueDate.getMonth()]}` : ``;
   const deadline = isExpired ? `card--deadline` : ``;
   const repeatClass = isRepeatingTask ? `card--repeat` : ``;
-  const time = isDateShowing ? Util.formatTime(dueDate) : ``;
+  const time = isDateShowing ? Common.formatTime(dueDate) : ``;
 
   return (
     `<article class="card card--edit card--${color} ${repeatClass} ${deadline}">
@@ -151,9 +152,10 @@ const createTaskEditTemplate = (task) => {
   );
 };
 
-export default class EditTask {
+export default class EditTask extends AbstractComponent {
   constructor(task) {
-    this._element = null;
+    super();
+
     this._task = task;
   }
 
@@ -161,19 +163,12 @@ export default class EditTask {
     return createTaskEditTemplate(this._task);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = Util.createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  getEditFormElement() {
+  _getEditFormElement() {
     return this.getElement().querySelector(`form`);
   }
 
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(handler) {
+    this._getEditFormElement().addEventListener(`submit`, handler);
   }
 }
 

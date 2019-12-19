@@ -1,4 +1,4 @@
-import Util from "../utils";
+import AbstractComponent from "./abstract-component";
 
 export const createNoTasksMarkup = () => {
   return (
@@ -12,24 +12,14 @@ const createBoardTemplate = () => {
   );
 };
 
-export default class Board {
+export default class Board extends AbstractComponent {
   constructor(tasks) {
-    this._element = null;
+    super();
+
     this._tasks = tasks;
   }
 
   getTemplate() {
     return createBoardTemplate(this._tasks);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = Util.createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

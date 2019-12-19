@@ -31,7 +31,30 @@ const FILTER_NAMES = [
   `archive`
 ];
 
-
 const DAYS = [`mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`];
 
-export {COLORS, MONTH_NAMES, DAYS, FILTER_NAMES};
+const BUTTON_CONTROLS = [`edit`, `archive`, `favorites`];
+
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  AFTEREND: `afterend`,
+  BEFOREEND: `beforeend`
+};
+
+const TaskNumber = {
+  COUNT: 22,
+  INDEX_START: 0,
+  SHOW: 8
+};
+
+const Day = {
+  FIRST: 0,
+  LAST: 7
+};
+
+const Tag = {
+  MIN: 0,
+  MAX: 3
+};
+
+export {COLORS, MONTH_NAMES, DAYS, FILTER_NAMES, BUTTON_CONTROLS, RenderPosition, TaskNumber, Tag, Day};

@@ -1,4 +1,4 @@
-import Util from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const createButtonLoadMoreTemplate = () => {
   return (
@@ -6,32 +6,12 @@ const createButtonLoadMoreTemplate = () => {
   );
 };
 
-const removeButtonLoadMore = (button, currentTasksCount, tasks) => {
-  if (currentTasksCount >= tasks) {
-    button.getElement().remove();
-    button.removeElement();
-  }
-};
-
-export default class ButtonLoadMore {
-  constructor() {
-    this._element = null;
-  }
-
+export default class ButtonLoadMore extends AbstractComponent {
   getTemplate() {
     return createButtonLoadMoreTemplate();
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = Util.createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setClickHandler(handler) {
+    this.getElement().addEventListener(`click`, handler);
   }
 }
-
-export {removeButtonLoadMore};
