@@ -57,4 +57,11 @@ const Tag = {
   MAX: 3
 };
 
-export {COLORS, MONTH_NAMES, DAYS, FILTER_NAMES, BUTTON_CONTROLS, RenderPosition, TaskNumber, Tag, Day};
+const SortType = {
+  DATE_DOWN: `date-down`,
+  DATE_UP: `date-up`,
+  DEFAULT: `default`
+};
+
+export {COLORS, MONTH_NAMES, DAYS, FILTER_NAMES, BUTTON_CONTROLS,
+  RenderPosition, TaskNumber, Tag, Day, SortType};

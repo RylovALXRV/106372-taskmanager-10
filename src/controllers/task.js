@@ -9,7 +9,7 @@ export default class TaskController {
     this._taskComponent = null;
     this._taskEditComponent = null;
 
-    this.onOpen = onOpen;
+    this._onOpen = onOpen;
   }
 
   render(task) {
@@ -23,7 +23,7 @@ export default class TaskController {
 
   _replaceTaskToEdit() {
     Render.replace(this._taskEditComponent.getElement(), this._taskComponent.getElement());
-    this.onOpen(this._taskComponent, this._taskEditComponent, this);
+    this._onOpen(this._taskComponent, this._taskEditComponent, this);
   }
 
   _replaceEditToTask(taskComponent, taskEditComponent) {
