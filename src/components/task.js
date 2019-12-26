@@ -1,12 +1,6 @@
-import {MONTH_NAMES, BUTTON_CONTROLS} from "../const";
+import {MONTH_NAMES, ButtonControl} from "../const";
 import Common from "../utils/common";
 import AbstractComponent from "./abstract-component";
-
-const ButtonDefault = {
-  edit: false,
-  archive: false,
-  favorites: false
-};
 
 const createHashtagsMarkup = (hashtags) => {
   return hashtags.map((hashtag) => {
@@ -52,9 +46,9 @@ const createDatesMarkup = (dueDate) => {
   return ``;
 };
 
-const createButtonsControlMarkup = () => {
-  return BUTTON_CONTROLS.map((button) => {
-    return `<button type="button" class="card__btn card__btn--${button} ${BUTTON_CONTROLS[ButtonDefault] ? `card__btn--disabled` : ``}">${button}</button>`;
+const createButtonsControlMarkup = (task) => {
+  return Object.keys(ButtonControl).map((button) => {
+    return `<button type="button" class="card__btn card__btn--${button.toLocaleLowerCase()} ${task[ButtonControl[button]] ? `card__btn--disabled` : ``}">${button}</button>`;
   }).join(``);
 };
 
@@ -71,7 +65,7 @@ const createTaskTemplate = (task) => {
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
-            ${createButtonsControlMarkup()}
+            ${createButtonsControlMarkup(task)}
           </div>
 
           <div class="card__color-bar">
@@ -111,7 +105,23 @@ export default class Task extends AbstractComponent {
     return this.getElement().querySelector(`.card__btn--edit`);
   }
 
-  setClickHandler(handler) {
+  _getArchiveElement() {
+    return this.getElement().querySelector(`.card__btn--archive`);
+  }
+
+  _getFavoritesElement() {
+    return this.getElement().querySelector(`.card__btn--favorites`);
+  }
+
+  setClickEditHandler(handler) {
     this._getEditButtonElement().addEventListener(`click`, handler);
+  }
+
+  setClickArchiveHandler(handler) {
+    this._getArchiveElement().addEventListener(`click`, handler);
+  }
+
+  setClickFavoritesHandler(handler) {
+    this._getFavoritesElement().addEventListener(`click`, handler);
   }
 }
