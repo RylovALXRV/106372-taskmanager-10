@@ -33,7 +33,11 @@ const FILTER_NAMES = [
 
 const DAYS = [`mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`];
 
-const BUTTON_CONTROLS = [`edit`, `archive`, `favorites`];
+const ButtonControl = {
+  EDIT: ``,
+  ARCHIVE: `isArchive`,
+  FAVORITES: `isFavorite`
+};
 
 const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
@@ -63,5 +67,5 @@ const SortType = {
   DEFAULT: `default`
 };
 
-export {COLORS, MONTH_NAMES, DAYS, FILTER_NAMES, BUTTON_CONTROLS,
+export {COLORS, MONTH_NAMES, DAYS, FILTER_NAMES, ButtonControl,
   RenderPosition, TaskNumber, Tag, Day, SortType};
